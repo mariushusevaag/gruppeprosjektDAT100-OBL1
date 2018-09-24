@@ -55,7 +55,27 @@ public class ShowSpeed extends EasyGraphics {
 		// TODO:
 		
 		// OPPGAVE - START		
-		
+		for (int i = 0; i < speeds.length; i++) {
+			
+			setColor(0, 0, 255);
+			int x1, y1, x2, y2; // koordinator søylen 
+			
+			x1 = 2*MARGIN+2*N; //Bruker i*2 for å få litt mellomrom
+			y1 = ybase;
+			x2 = x1;
+			y2 = ybase-(int)speeds[i]; //Må trekke fra pga. easygraphics origo
+			
+			int Linje = drawLine(x1,y1,x2,y2);
+			moveLine(Linje, MARGIN+i*2, ybase);
+			
+			//Henter snittfart fra GPSComputer
+			int snittfart = (int)gpscomputer.averageSpeed();
+			setColor(0,255,0);
+			
+			int snittLinje = drawLine(0, ybase-snittfart, 2*MARGIN+2*N, ybase-snittfart);
+			//Legger inn pause
+			pause(times[i]/timescaling);
+		}
 		// OPPGAVE - SLUTT
 	}
 }

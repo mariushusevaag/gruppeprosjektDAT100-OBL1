@@ -26,9 +26,10 @@ public class GPSComputer {
 
 		// TODO
 		// OPPGAVE - START
-
 		// Hint: bruk distance-metoden fra GPSUtils.
-		
+		for (int i = 0; i < times.length - 1; i++) {
+			distance += GPSUtils.distance(latitudes[i], longitudes[i], latitudes[i +1], longitudes[i + 1]);
+		}
 		// OPPGAVE - SLUTT
 
 		return distance;
@@ -41,7 +42,11 @@ public class GPSComputer {
 
 		// TODO
 		// OPPGAVE - START
-
+		for (int i = 0; i < elevations.length - 1; i++) {
+			if (elevations[i+1] - elevations[i] >= 0) {
+				elevation += (elevations[i+1] - elevations[i]);
+			}
+		}
 		// OPPGAVE - SLUTT
 		return elevation;
 	}
@@ -53,7 +58,7 @@ public class GPSComputer {
 		
 		// TODO 
 		// OPPGAVE START
-		
+		totaltime = times[times.length-1]-times[0];
 		// OPPGAVE SLUTT
 		
 		return totaltime;
@@ -66,7 +71,11 @@ public class GPSComputer {
 		
 		// TODO
 		// OPPGAVE - START
-		
+		int secs;
+		for (int i = 0; i < times.length - 1; i++) {
+			secs = times[i+1]-times[i];
+			speeds[i] += GPSUtils.speed(secs, latitudes[i], longitudes[i], latitudes[i + 1], longitudes[i + 1]);
+		}
 		// OPPGAVE - SLUTT
 		return speeds;
 	}
@@ -78,7 +87,11 @@ public class GPSComputer {
 		
 		// TODO
 		// OPPGAVE - START
-				
+		double[] speeds = speeds();
+		maxspeed = speeds[0];
+		for (int i = 1; i < speeds.length; i++) {
+			maxspeed = Math.max(speeds[i], maxspeed);
+		}
 		// OPPGAVE - SLUTT
 		
 		return maxspeed;
@@ -91,7 +104,9 @@ public class GPSComputer {
 		
 		// TODO
 		// OPPGAVE - START
-				
+		double totalTid = totalTime();
+		double totalDistanse = totalDistance();
+		average = (totalDistanse/totalTid*60*60)/1000;
 		// OPPGAVE - SLUTT
 		
 		return average;
@@ -112,9 +127,36 @@ public class GPSComputer {
 
 		// TODO
 		// OPPGAVE START
-		
 		// Energy Expended (kcal) = MET x Body Weight (kg) x Time (h)
-
+		if (speedmph < 10.0) {
+			met = 4.0;
+			kcal = met*weight*((double)secs/3600.0);
+		}
+		
+		else if (speedmph <= 12.0 && speedmph >= 10.0) {
+			met = 6.0;
+			kcal = met*weight*((double)secs/3600.0);
+		}
+		
+		else if (speedmph <= 14.0 && speedmph >= 12.0) {
+			met = 8.0;
+			kcal = met*weight*((double)secs/3600.0);
+		}
+		
+		else if (speedmph <= 15.0 && speedmph >= 14.0) {
+			met = 10.0;
+			kcal = met*weight*((double)secs/3600.0);
+		}
+		
+		else if (speedmph <= 20.0 && speedmph >= 16.0) {
+			met = 12.0;
+			kcal = met*weight*((double)secs/3600.0);
+		}
+		
+		else if (speedmph > 20.0) {
+			met = 16.0;
+			kcal = met*weight*((double)secs/3600.0);
+		}
 		// OPPGAVE SLUTT
 		
 		return kcal;
@@ -123,26 +165,39 @@ public class GPSComputer {
 	public double totalKcal(double weight) {
 
 		double totalkcal = 0;
-
 		// TODO
 		// OPPGAVE - START 
 		
 		// Hint: hent hastigheter i speeds tabellen og tider i timestabellen
 		// disse er definer i toppen av klassen og lese automatisk inn
-		
+		double[] speeds = speeds();
+		for (int i=0; i<times.length-1; i++) {
+			totalkcal = totalkcal + kcal(weight, times[i], speeds[i]);
+		}
 		// OPPGAVE - SLUTT
 		
 		return totalkcal;
 	}
 	
-	private static double WEIGHT = 80.0;
+	public static double WEIGHT = 80.0;
 	
 	// skriv ut statistikk for turen
 	public void print() {
 		
 		// TODO
 		// OPPGAVE - START
-				
+		int tid = totalTime();
+		double distance = totalDistance();
+		double elevation = totalElevation();
+		double maxspeed = maxSpeed();
+		double averageSpeed = averageSpeed();
+		double totalKcal = totalKcal(WEIGHT);
+		System.out.format("Total Time     :    %02d:%02d:%02d%n", (tid/3600), ((tid%3600)/60), (tid%60));
+		System.out.format("Total distance :    %.2f km%n", distance/1000);
+		System.out.format("Total elevation:    %.2f m%n", elevation);
+		System.out.format("Max speed      :    %.2f km/t%n",  maxspeed);
+		System.out.format("Average speed  :    %.2f km/t%n",  averageSpeed);
+		System.out.format("Energy         :    %.2f kcal%n", totalKcal/1000);
 		// OPPGAVE - SLUT
 	}
 	

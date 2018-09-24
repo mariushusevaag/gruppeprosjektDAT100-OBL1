@@ -2,6 +2,7 @@ package no.hvl.dat100.prosjekt;
 
 public class GPSDataConverter {
 
+	private static String SEP_STR = ",";
 	// arrays for GPS data in the original representation as array of strings
 	private String[] timesstr, latitudesstr, longitudesstr, elevationsstr;
 			
@@ -34,6 +35,14 @@ public class GPSDataConverter {
 		// TODO
 		// OPPGAVE - START
 		
+		
+		hr = Integer.parseInt(timestr.substring(11, 13));
+		min = Integer.parseInt(timestr.substring(14, 16));
+		sec = Integer.parseInt(timestr.substring(17, 19));
+		
+		secs = (hr * 3600) + (min * 60) + sec;
+				
+				
 		// OPPGAVE - SLUTT
 		return secs;
 	}
@@ -57,6 +66,18 @@ public class GPSDataConverter {
 		// OPPGAVE - START
 		
 		// Hint:
+		
+		for (int i = 0; i < n; i++) {
+			
+			times[i] = toSeconds(timesstr[i]);
+			latitudes[i] = Double.parseDouble(latitudesstr[i]);
+			longitudes[i] = Double.parseDouble(longitudesstr[i]);
+			elevations[i] = Double.parseDouble(elevationsstr[i]);
+			
+		}
+		
+		
+		
 		// iterer igjennom alle gps punkter (hint: bruk en for-løkke)
 		// konverter hver inngang gps datapunkt 
 		// - tidsinformasjon til sekunder (int) (hint: bruk toSeconds)
@@ -72,11 +93,15 @@ public class GPSDataConverter {
 	// skriv ut konvertert GPS data op formatet:
 	// sekunder (breddegrad,lengdegrad) høyde
 	public void print() {
-	
+		int n = timesstr.length;
+		
 		System.out.println("Konvertert GPS Data");
 		// TODO
 		// OPPGAVE - START
 		
+		for (int i = 0; i < n; i++) {
+			System.out.println(times[i] + " (" + latitudes[i] + SEP_STR + longitudes[i] + ") " + elevations[i] );
+		}
 		
 		// OPPGAVE - SLUTT
 	}

@@ -46,10 +46,13 @@ public class ShowProfile extends EasyGraphics {
 
 	public void showHeightProfile(int ybase) {
 
-
+		int N = elevations.length;
 		System.out.println("Angi tidsskalering i tegnevinduet ...");
 		int timescaling = Integer.parseInt(getText("Tidsskalering"));
 
+		drawString ("500 meter", 0, MARGIN);
+		drawString ("0 meter", 0, ybase);
+		drawString ("250 meter", 0, ybase/2);
 		setColor(0, 0, 255);
 
 		// elevations tabellen innholder alle høydedata
@@ -64,6 +67,15 @@ public class ShowProfile extends EasyGraphics {
 			// (x1,y1) er startpunkt for søylen (linjen)
 			// (x2,y2) er slutt punkt.
 
+			x1 = 2*MARGIN+3*N; //Bruker i*2 for å få litt mellomrom
+			y1 = ybase;
+			x2 = x1;
+			y2 = ybase-(int)elevations[i]; //Må trekke fra pga. easygraphics origo
+			int Linje = drawLine(x1,y1,x2,y2);
+			moveLine(Linje, MARGIN+i*2, ybase);
+			
+			pause(times[i]/timescaling);
+			
 			// OPPGAVE - SLUTT
 			
 		}	

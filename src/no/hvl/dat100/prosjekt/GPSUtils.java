@@ -1,6 +1,7 @@
 package no.hvl.dat100.prosjekt;
 
-import static java.lang.Math.*;
+import java.util.*;
+import java.text.SimpleDateFormat;
 
 public class GPSUtils {
 
@@ -12,11 +13,15 @@ public class GPSUtils {
 	public static String printTime(int secs) {
 		
 		String timestr = "";
-		String TIMESEP = ":";
 		
 		// TODO
 		// OPPGAVE - START
-				
+		
+		Date d = new Date(secs * 1000L);
+		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+		df.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+		timestr = df.format(d);
 		// OPPGAVE - SLUTT
 		
 		return timestr;
@@ -40,11 +45,15 @@ public class GPSUtils {
 	public static double findMin(double[] da) {
 
 		// fjern = "0.0" når metoden implementeres for ikke få forkert minimum
-		double min = 0.0; 
+		double min = da[0]; 
 
 		// TODO
 		// OPPGAVE - START
-
+		for (double d: da) {
+			if (d < min) {
+				min = d;
+			}
+		}
 		// OPPGAVE - SLUT
 		return min;
 	}
@@ -55,11 +64,21 @@ public class GPSUtils {
 	// Beregn avstand mellom to gps punkter ved bruk av Haversine formlen
 	public static double distance(double latitude1, double longitude1, double latitude2, double longitude2) {
 
-		double a,c,d = 1.0; // fjern = 1.0
+		double a,c,d; // fjern = 1.0
 		
 		// TODO:
 		// OPPGAVE - START
+		double la1 = Math.toRadians(latitude1);
+		double lo1 = Math.toRadians(longitude1);
+		double la2 = Math.toRadians(latitude2);
+		double lo2 = Math.toRadians(longitude2);
 		
+		double diffLa = la2 - la1;
+		double diffLo = lo2 - lo1;
+		
+		a = Math.pow(Math.sin(diffLa/2), 2) + (Math.cos(la1) * Math.cos(la2) * Math.pow(Math.sin(diffLo/2),2));
+		c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt((1-a)));
+		d = R * c;
 		// OPPGAVE - SLUTT
 
 		return d;
@@ -72,7 +91,11 @@ public class GPSUtils {
 
 		// TODO:
 		// OPPGAVE - START
+		double distanse = distance(latitude1, longitude1, latitude2, longitude2);
+		int tid = secs;
 		
+		
+		speed = (distanse/tid)*3.6;
 		// OPPGAVE - SLUTT
 
 		return speed;
@@ -90,6 +113,10 @@ public class GPSUtils {
 		
 		// TODO
 		// OPPGAVE - START
+		
+		String d_2 = String.format("%.2f",d);
+		str = String.format("%10s", d_2).replace(",", ".");
+		
 		
 		// OPPGAVE - SLUTT
 		

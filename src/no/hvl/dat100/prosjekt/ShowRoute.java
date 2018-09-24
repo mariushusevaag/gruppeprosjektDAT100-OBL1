@@ -39,11 +39,13 @@ public class ShowRoute extends EasyGraphics {
 
 		makeWindow("Route", MAPXSIZE + 2 * MARGIN, MAPYSIZE + 2 * MARGIN);
 
+		showStatistics();
+		
 		showRouteMap(MARGIN + MAPYSIZE);
 
 		playRoute(MARGIN + MAPYSIZE);
 		
-		showStatistics();
+		
 	}
 
 	// x-pixels per lengdegrad
@@ -65,7 +67,10 @@ public class ShowRoute extends EasyGraphics {
 		
 		// TODO
 		// OPPGAVE - START
+		double maxlat = GPSUtils.findMax(latitudes);
+		double minlat = GPSUtils.findMin(latitudes);
 		
+		ystep = MAPYSIZE/(Math.abs(maxlat-minlat));
 		// OPPGAVE SLUTT
 		
 		return ystep;
@@ -73,20 +78,33 @@ public class ShowRoute extends EasyGraphics {
 
 	public void showRouteMap(int ybase) {
 		
+
 		double xstep = xstep();
 		double ystep = ystep();
 
 		double minlon = GPSUtils.findMin(longitudes);
 		double minlat = GPSUtils.findMin(latitudes);
-
 		setColor(0, 255, 0); // green
+		System.out.println("Angi tidsskalering i tegnevinduet ...");
+		int timescaling = Integer.parseInt(getText("Tidsskalering"));
 
 		// draw the locations
-		for (int i = 0; i < latitudes.length; i++) {
+		for (int i = 1; i < latitudes.length; i++) {
 
-			int x,y;
+			int x,y,x2,y2;
 
 			// TODO: OPPGAVE START
+			x = MARGIN + (int) ((longitudes[i-1] - minlon) * xstep);
+			y = ybase - (int) ((latitudes[i-1]- minlat) * ystep);
+			//Sluttkoordinater til linjen
+			x2 = MARGIN + (int) ((longitudes[i] - minlon) * xstep);
+			y2 = ybase - (int) ((latitudes[i]- minlat) * ystep);
+			
+			fillCircle(x,y,2);
+			drawLine(x2,y2,x,y);
+			pause(times[i]/timescaling);
+			
+			
 			
 			// må finne punkt nr i fra latitues og longitudes tabellene
 			// og sette x og y til der de skal tegnes som et punkt i vinduet
@@ -106,7 +124,18 @@ public class ShowRoute extends EasyGraphics {
 		
 		// TODO:
 		// OPPGAVE - START
-				
+		int tid = gpscomputer.totalTime();
+		double distance = gpscomputer.totalDistance();
+		double elevation = gpscomputer.totalElevation();
+		double maxspeed = gpscomputer.maxSpeed();
+		double averageSpeed = gpscomputer.averageSpeed();
+		double totalKcal = gpscomputer.totalKcal(GPSComputer.WEIGHT);
+		drawString(String.format("Total Time     :    %02d:%02d:%02d%n", (tid/3600), ((tid%3600)/60), (tid%60)), MARGIN, TEXTDISTANCE);
+		drawString(String.format("Total distance :    %.2f km%n", distance/1000),MARGIN, TEXTDISTANCE*2);
+		drawString(String.format("Total elevation:    %.2f m%n", elevation), MARGIN, TEXTDISTANCE*3);
+		drawString(String.format("Max speed      :    %.2f km/t%n",  maxspeed), MARGIN, TEXTDISTANCE*4);
+		drawString(String.format("Average speed  :    %.2f km/t%n",  averageSpeed), MARGIN, TEXTDISTANCE*5);
+		drawString(String.format("Energy         :    %.2f kcal%n", totalKcal/1000), MARGIN, TEXTDISTANCE*6);		
 		// OPPGAVE - SLUTT;
 	}
 
